@@ -1,0 +1,3 @@
+[submodule "frontEnd"]
+	path = frontEnd
+	url = git@github.com:c2stem/c2stem-classroom.git
