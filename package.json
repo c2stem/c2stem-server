@@ -1,0 +1,30 @@
+{
+  "name": "c2stem-server",
+  "version": "1.0.0",
+  "description": "A genralized c2stem server for vue apps.",
+  "main": "server.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/c2stem/c2stem-server.git"
+  },
+  "keywords": [
+    "c2stem"
+  ],
+  "author": "Naveed Mohammed",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/c2stem/c2stem-server/issues"
+  },
+  "homepage": "https://github.com/c2stem/c2stem-server#readme",
+  "dependencies": {
+    "body-parser": "^1.20.0",
+    "ejs": "^3.1.8",
+    "express": "^4.18.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
+  }
+}
