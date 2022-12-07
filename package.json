@@ -4,6 +4,7 @@
   "description": "A genralized c2stem server for vue apps.",
   "main": "server.js",
   "scripts": {
+    "run": "nodemon server.js",
     "test": "test"
   },
   "repository": {
@@ -21,10 +22,14 @@
   "homepage": "https://github.com/c2stem/c2stem-server#readme",
   "dependencies": {
     "body-parser": "^1.20.0",
+    "cors": "^2.8.5",
     "dotenv": "^16.0.2",
     "ejs": "^3.1.8",
     "express": "^4.18.1",
-    "mongoose": "^5.10.11"
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.10.11",
+    "passport": "^0.6.0",
+    "passport-local": "^1.0.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.20"
