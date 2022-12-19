@@ -13,7 +13,9 @@ router.post('/login', catchAsync(async (req, res, next) => {
     
         if(user) {
             const token = user.generateJwt();
-            return res.status(200).json({ token });
+            const userRole = user.role;
+            const userClass = user.class;
+            return res.status(200).json({ token: token, role: userRole, class: userClass });
         }
     
         return res.status(400).info;
