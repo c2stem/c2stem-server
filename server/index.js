@@ -8,7 +8,7 @@ const passport = require('passport');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
-const UserRoute = require('./routes/UserRoute');
+const UserRoute = require('./routes/userRoute');
 
 port = process.env.PORT || 8203;
 mongo_uri = process.env.MONGO_URI || 'mongodb://localhost:27017/c2stem-class';
