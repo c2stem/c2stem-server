@@ -9,15 +9,17 @@ const strategy = new LocalStrategy(
         User.findOne(
             { username: username },
             (err, user) => {
-                if (err) { return done(err); }
+                if (err) { console.log("inside passport", err);return done(err); }
                 // Return if user not found in database
                 if (!user) {
+                    console.log("inside passport user not found", err);
                     return done(null, false, {
                         message: 'User not found'
                     });
                 }
                 // Return if password is wrong
                 if (!user.validPassword(password)) {
+                    console.log("inside passport password wrong", err);
                     return done(null, false, {
                         message: 'Password is wrong'
                     });
