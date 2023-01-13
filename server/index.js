@@ -30,7 +30,7 @@ db.once("open", () => {
 });
 
 server.set('view engine', 'html');
-server.use(express.static(path.join(__dirname, 'frontEnd/dist')))
+server.use(express.static(path.join(__dirname, '../client/dist')))
 server.use(bodyParser.json());
 server.use(bodyParser.urlencoded({
   extended: false
@@ -47,7 +47,7 @@ server.use(function(req, res, next) {
 
 server.use('/user', UserRoute);
 server.get('/*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'frontEnd/dist/index.html'));
+    res.sendFile(path.join(__dirname, '../client/dist/index.html'));
 })
 
 server.listen(port, () => {
