@@ -5,9 +5,10 @@ const User = require('../models/user');
 const catchAsync = require('../utils/CatchAsync');
 
 router.post('/login', catchAsync(async (req, res, next) => {
-
+    console.log("got to user route", req);
     return passport.authenticate('local', { session: false }, (err, user, _info) => {
         if(err) {
+          console.log("error while authenticating", err);
           return next(err);
         }
     
@@ -15,6 +16,7 @@ router.post('/login', catchAsync(async (req, res, next) => {
             const token = user.generateJwt();
             const userRole = user.role;
             const userClass = user.class;
+            console.log("passed auth", token, user);
             return res.status(200).json({ token: token, role: userRole, class: userClass });
         }
     
