@@ -11,7 +11,7 @@ const mongoose = require('mongoose');
 const UserRoute = require('./routes/userRoute');
 
 port = process.env.PORT || 8203;
-mongo_uri = process.env.MONGO_URI || 'mongodb://localhost:27017/c2stem-class';
+mongo_uri = 'mongodb://localhost:27017/c2stem-class';
 
 mongoose.connect(mongo_uri, {
     useNewUrlParser: true,
@@ -23,11 +23,11 @@ mongoose.connect(mongo_uri, {
     console.log(err)
 });
 
-const db = mongoose.connection;
-db.on("error", console.error.bind(console, "connection error"));
-db.once("open", () => {
-    console.log("Database connected");
-});
+// const db = mongoose.connection;
+// db.on("error", console.error.bind(console, "connection error"));
+// db.once("open", () => {
+//     console.log("Database connected");
+// });
 
 server.set('view engine', 'html');
 server.use(express.static(path.join(__dirname, '../client/dist')))

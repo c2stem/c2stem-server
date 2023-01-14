@@ -5,7 +5,6 @@ const User = require('../models/user');
 const catchAsync = require('../utils/CatchAsync');
 
 router.post('/login', catchAsync(async (req, res, next) => {
-    console.log("got to user route");
     return passport.authenticate('local', { session: false }, (err, user, _info) => {
         if(err) {
           console.log("error while authenticating", err);
