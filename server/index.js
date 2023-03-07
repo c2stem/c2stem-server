@@ -9,6 +9,7 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
 const UserRoute = require('./routes/userRoute');
+const StateRoute = require('./routes/stateRoute');
 
 port = process.env.PORT || 8203;
 mongo_uri = 'mongodb://localhost:27017/c2stem-class';
@@ -39,13 +40,14 @@ server.use(bodyParser.urlencoded({
 server.use(passport.initialize());
 
 server.use(function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Origin", "http://localhost:8080");
     res.header("Access-Control-Allow-Credentials", "true");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     next();
   });
 
 server.use('/user', UserRoute);
+server.use('/state', StateRoute);
 server.get('/*', (req, res) => {
     res.sendFile(path.join(__dirname, '../client/dist/index.html'));
 })
