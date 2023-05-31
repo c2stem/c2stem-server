@@ -20,9 +20,15 @@ router.post(
           const token = user.generateJwt();
           const userRole = user.role;
           const userClass = user.class;
+          const userGroup = user.group;
           return res
             .status(200)
-            .json({ token: token, role: userRole, class: userClass });
+            .json({
+              token: token,
+              role: userRole,
+              class: userClass,
+              group: userGroup,
+            });
         }
 
         return res.status(400).info;
