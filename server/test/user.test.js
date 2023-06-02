@@ -39,4 +39,18 @@ describe("User model", () => {
     expect(savedUser.group).toBe(userData.group);
     expect(savedUser.salt).toBeDefined();
   });
+
+  it("remove a document", async () => {
+    const res = await User.deleteOne({ username: userData.username });
+    expect(res.ok).toBe(1);
+  });
+
+  it("filter documents by class", async () => {
+    const userClass = "CMISE";
+    const users = await User.find({ class: { $eq: userClass } }, "class");
+    expect(users[0].class).toBe("CMISE");
+  });
+  afterAll(() => {
+    mongoose.disconnect();
+  });
 });
