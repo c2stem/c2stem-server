@@ -62,4 +62,20 @@ userSchema.methods.generateJwt = function () {
   );
 };
 
+/**
+ * The method is to verify if the user is logged in before making any requests to the server.
+ * All requests without the token are rejected.
+ * @param {String} authorization
+ * @returns user data or error
+ */
+userSchema.methods.verifyJwt = function (authorization) {
+  if (typeof authorization !== "undefined") {
+    const authToken = authorization.split(" ")[1];
+    const verification = jwt.verify(authToken, process.env.JWT_SECRET_KEY);
+    return verification;
+  } else {
+    return "undefined";
+  }
+};
+
 module.exports = mongoose.model("User", userSchema);

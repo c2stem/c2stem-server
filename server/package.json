@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "run": "nodemon server.js",
-    "test": "jest ./test"
+    "test": "jest --runInBand ./test"
   },
   "repository": {
     "type": "git",
