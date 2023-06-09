@@ -21,7 +21,7 @@ const userSchema = new Schema({
   group: {
     type: String,
     required: true,
-    default: "CMISE",
+    default: "All",
   },
   username: {
     type: String,
@@ -74,7 +74,7 @@ userSchema.methods.verifyJwt = function (authorization) {
     const verification = jwt.verify(authToken, process.env.JWT_SECRET_KEY);
     return verification;
   } else {
-    return "undefined";
+    return undefined;
   }
 };
 

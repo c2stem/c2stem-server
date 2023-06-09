@@ -72,7 +72,10 @@ router.get(
     const verification = user.verifyJwt(req.headers["authorization"]);
     if (verification) {
       const filter = { class: { $eq: req.params.class } };
-      const usersByClass = await User.find(filter, "username class group");
+      const usersByClass = await User.find(
+        filter,
+        "username email role class group"
+      );
       if (!usersByClass) {
         res.status(400).json("could not retrieve the users");
         return;
