@@ -47,7 +47,7 @@ userSchema.methods.validPassword = function (password) {
 };
 
 userSchema.methods.generateJwt = function () {
-  var expiry = new Date();
+  const expiry = new Date();
   expiry.setDate(expiry.getDate() + 7);
   return jwt.sign(
     {
@@ -71,8 +71,7 @@ userSchema.methods.generateJwt = function () {
 userSchema.methods.verifyJwt = function (authorization) {
   if (typeof authorization !== "undefined") {
     const authToken = authorization.split(" ")[1];
-    const verification = jwt.verify(authToken, process.env.JWT_SECRET_KEY);
-    return verification;
+    return jwt.verify(authToken, process.env.JWT_SECRET_KEY);
   } else {
     return undefined;
   }

@@ -20,7 +20,10 @@ router.post(
           const token = user.generateJwt();
           const userRole = user.role;
           const userClass = user.class;
-          const userGroup = user.group;
+          let userGroup = user.group;
+          if(!userGroup){
+              userGroup = "All";
+          }
           return res.status(200).json({
             token: token,
             role: userRole,
