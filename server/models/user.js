@@ -23,6 +23,11 @@ const userSchema = new Schema({
     required: true,
     default: "All",
   },
+  teacher: {
+    type: String,
+    required: true,
+    default: 'None'
+  },
   username: {
     type: String,
     unique: true,

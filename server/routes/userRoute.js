@@ -4,64 +4,68 @@ const passport = require("passport");
 const User = require("../models/user");
 const catchAsync = require("../utils/CatchAsync");
 
+function verifyUser(token) {
+  const user = new User;
+  return user.verifyJwt(token);
+}
+
 router.post(
-  "/login",
-  catchAsync(async (req, res, next) => {
-    return passport.authenticate(
-      "local",
-      { session: false },
-      (err, user, _info) => {
-        if (err) {
-          console.log("error while authenticating", err);
-          return next(err);
-        }
+    "/login",
+    catchAsync(async (req, res, next) => {
+      return passport.authenticate(
+          "local",
+          {session: false},
+          (err, user, _info) => {
+            if (err) {
+              console.log("error while authenticating", err);
+              return next(err);
+            }
 
-        if (user) {
-          const token = user.generateJwt();
-          const userRole = user.role;
-          const userClass = user.class;
-          let userGroup = user.group;
-          if(!userGroup){
-              userGroup = "All";
+            if (user) {
+              const token = user.generateJwt();
+              const userRole = user.role;
+              const userClass = user.class;
+              let userGroup = user.group;
+              if (!userGroup) {
+                userGroup = "All";
+              }
+              return res.status(200).json({
+                token: token,
+                role: userRole,
+                class: userClass,
+                group: userGroup,
+              });
+            }
+
+            return res.status(400).info;
           }
-          return res.status(200).json({
-            token: token,
-            role: userRole,
-            class: userClass,
-            group: userGroup,
-          });
-        }
-
-        return res.status(400).info;
-      }
-    )(req, res, next);
-  })
+      )(req, res, next);
+    })
 );
 
 router.post(
-  "/register",
-  catchAsync(async (req, res, next) => {
-    const user = new User();
-    const verification = user.verifyJwt(req.headers["authorization"]);
-    if (verification) {
-      user.username = req.body.username;
-      user.email = req.body.email;
-      user.class = req.body.class;
-      user.role = req.body.role;
-      user.setPassword(req.body.password);
-      user.save((err) => {
-        if (err) {
-          res.status(400).json(err);
-          return;
-        }
+    "/register",
+    catchAsync(async (req, res, next) => {
+      const verification = verifyUser(req.headers["authorization"]);
+      if (verification) {
+        user.username = req.body.username;
+        user.email = req.body.email;
+        user.class = req.body.class;
+        user.role = req.body.role;
+        user.setPassword(req.body.password);
+        user.save((err) => {
+          if (err) {
+            res.status(400).json(err);
+            return;
+          }
 
-        const token = user.generateJwt();
-        res.status(200).json({ token });
-      });
-    } else {
-      res.sendStatus(403);
-    }
-  })
+          const token = user.generateJwt();
+          res.status(200).json({token});
+        });
+      } else {
+        res.sendStatus(403);
+      }
+    })
 );
 
 /**
@@ -69,25 +73,24 @@ router.post(
  * Allowed only after token is verified.
  */
 router.get(
-  "/getUsersByClass/:class",
-  catchAsync(async (req, res, next) => {
-    const user = new User();
-    const verification = user.verifyJwt(req.headers["authorization"]);
-    if (verification) {
-      const filter = { class: { $eq: req.params.class } };
-      const usersByClass = await User.find(
-        filter,
-        "username email role class group"
-      );
-      if (!usersByClass) {
-        res.status(400).json("could not retrieve the users");
-        return;
+    "/getUsersByClass/:class",
+    catchAsync(async (req, res, next) => {
+      const verification = verifyUser(req.headers["authorization"]);
+      if (verification) {
+        const filter = {class: {$eq: req.params.class}};
+        const usersByClass = await User.find(
+            filter,
+            "username email role class group teacher"
+        );
+        if (!usersByClass) {
+          res.status(400).json("could not retrieve the users");
+          return;
+        }
+        res.status(200).json(usersByClass);
+      } else {
+        res.sendStatus(403);
       }
-      res.status(200).json(usersByClass);
-    } else {
-      res.sendStatus(403);
-    }
-  })
+    })
 );
 
 /**
@@ -95,32 +98,91 @@ router.get(
  * Allowed only after token is verified.
  */
 router.post(
-  "/setUserGroup",
-  catchAsync(async (req, res, next) => {
-    const user = new User();
-    const verification = user.verifyJwt(req.headers["authorization"]);
-    if (verification && verification !== "undefined") {
-      const username = req.body.username;
-      const userGroup = req.body.group;
+    "/setUserGroup",
+    catchAsync(async (req, res, next) => {
+      const verification = verifyUser(req.headers["authorization"]);
+      if (verification && verification !== "undefined") {
+        const username = req.body.username;
+        const userGroup = req.body.group;
 
-      const filter = { username: username };
-      const update = { group: userGroup };
-      const filteredUser = await User.find(filter);
-      if (filteredUser.length > 0) {
-        let userResponse = await User.findOneAndUpdate(filter, update, {
-          new: true,
-        });
-        if (!userResponse) {
-          res.status(400).json("could not save the user");
+        const filter = {username: username};
+        const update = {group: userGroup};
+        const filteredUser = await User.find(filter);
+        if (filteredUser.length > 0) {
+          let userResponse = await User.findOneAndUpdate(filter, update, {
+            new: true,
+          });
+          if (!userResponse) {
+            res.status(400).json("could not save the user");
+            return;
+          }
+          res.status(200).json("OK");
+        } else {
+          res.status(400).json("could not find user");
+        }
+      } else {
+        res.sendStatus(403);
+      }
+    })
+);
+/**
+ * Returns a list of distinct teachers from the user DB.
+ * Allowed only after token is verified.
+ */
+router.get(
+    "/getTeachers",
+    catchAsync(async (req, res, next) => {
+      const verification = verifyUser(req.headers["authorization"]);
+      if (verification && verification !== "undefined") {
+        const teachers = await User.distinct('teacher');
+        if (!teachers) {
+          res.status(400).json("could not find teachers");
           return;
         }
-        res.status(200).json("OK");
+        res.status(200).json(teachers);
       } else {
-        res.status(400).json("could not find user");
+        res.sendStatus(403);
+      }
+    })
+);
+
+router.get(
+    "/getUsersByTeacher/:teacher", catchAsync(async (req, res, next) => {
+      const verification = verifyUser(req.headers["authorization"]);
+      if (verification && verification !== "undefined") {
+        const filter = {teacher: {$eq: req.params.teacher}};
+        const usersByTeacher = await User.find(filter, "username email role class group teacher")
+        if (!usersByTeacher) {
+          res.status(400).json("could not retrieve the users");
+          return;
+        }
+        res.status(200).json(usersByTeacher);
+      } else {
+        res.sendStatus(403);
+      }
+    })
+)
+
+router.post("/setTeacher", catchAsync(async (req, res, next) => {
+  const verification = verifyUser(req.headers["authorization"]);
+  if (verification && verification !== "undefined") {
+    const username = req.body.username;
+    const teacher = req.body.teacher;
+    const filter = {username: username}
+    const update = {teacher: teacher};
+    const filteredUser = await User.find(filter);
+    if (filteredUser.length > 0) {
+      const response = await User.findOneAndUpdate(filter, update, {new: true});
+      if (!response) {
+        res.sendStatus(400).info("could not save the user data");
+      } else {
+        res.sendStatus(200).info("OK")
       }
     } else {
-      res.sendStatus(403);
+      res.sendStatus(400).info("could not find the user");
     }
-  })
-);
+  } else {
+    res.sendStatus(403);
+  }
+}))
 module.exports = router;
