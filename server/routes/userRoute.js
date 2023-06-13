@@ -29,11 +29,16 @@ router.post(
               if (!userGroup) {
                 userGroup = "All";
               }
+              let teacher = user.teacher;
+              if (!teacher) {
+                teacher = 'All'
+              }
               return res.status(200).json({
                 token: token,
                 role: userRole,
                 class: userClass,
                 group: userGroup,
+                teacher: teacher
               });
             }
 
