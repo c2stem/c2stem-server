@@ -70,6 +70,12 @@ describe("User model", () => {
     expect(teacherResult).toEqual(teachers);
   })
 
+  it("fetch users by teacher", async ()=>{
+      const teacher = "first";
+      const users = await User.find({teacher: {$eq: teacher}}, "teacher");
+      expect(users[0].teacher).toBe("first");
+  })
+
   it("remove documents", async () => {
     userData.forEach(async(user)=>{
       const res = await User.deleteOne({ username: user.username });

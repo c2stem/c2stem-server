@@ -77,7 +77,7 @@ router.get(
       const filter = { class: { $eq: req.params.class } };
       const usersByClass = await User.find(
         filter,
-        "username email role class group"
+        "username email role class group teacher"
       );
       if (!usersByClass) {
         res.status(400).json("could not retrieve the users");
@@ -144,4 +144,22 @@ router.get(
         }
     })
 );
+
+router.get(
+    "/getUsersByTeacher/:teacher", catchAsync(async(req, res, next)=>{
+        const user = new User();
+        const verification = user.verifyJwt(req.headers["authorization"]);
+        if (verification && verification !== "undefined") {
+            const filter = {teacher: {$eq: req.params.teacher}};
+            const usersByTeacher = await User.find( filter, "username email role class group teacher")
+            if (!usersByTeacher) {
+                res.status(400).json("could not retrieve the users");
+                return;
+            }
+            res.status(200).json(usersByTeacher);
+        }else{
+            res.sendStatus(403);
+        }
+    })
+)
 module.exports = router;
