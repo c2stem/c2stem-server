@@ -123,4 +123,25 @@ router.post(
     }
   })
 );
+/**
+ * Returns a list of distinct teachers from the user DB.
+ * Allowed only after token is verified.
+ */
+router.get(
+    "/getTeachers",
+    catchAsync(async (req, res, next) => {
+        const user = new User();
+        const verification = user.verifyJwt(req.headers["authorization"]);
+        if (verification && verification !== "undefined") {
+            const teachers = await User.distinct('teacher');
+            if (!teachers) {
+                res.status(400).json("could not find teachers");
+                return;
+            }
+            res.status(200).json(teachers);
+        }else{
+            res.sendStatus(403);
+        }
+    })
+);
 module.exports = router;
