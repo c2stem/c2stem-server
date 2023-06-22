@@ -51,12 +51,15 @@ router.post(
 router.post(
     "/register",
     catchAsync(async (req, res, next) => {
+        let user = new User();
       const verification = verifyUser(req.headers["authorization"]);
       if (verification) {
         user.username = req.body.username;
         user.email = req.body.email;
         user.class = req.body.class;
         user.role = req.body.role;
+        user.group = req.body.group;
+        user.teacher = req.body.teacher;
         user.setPassword(req.body.password);
         user.save((err) => {
           if (err) {
