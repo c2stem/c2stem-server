@@ -51,7 +51,7 @@ router.post(
 router.post(
     "/register",
     catchAsync(async (req, res, next) => {
-        let user = new User();
+      let user = new User();
       const verification = verifyUser(req.headers["authorization"]);
       if (verification) {
         user.username = req.body.username;
@@ -76,6 +76,35 @@ router.post(
     })
 );
 
+router.post("/registerInBulk",
+    catchAsync(async (req, res, next) => {
+      const user = new User();
+      let userData = [];
+      const verification = verifyUser(req.headers["authorization"]);
+      if (verification) {
+        console.log(typeof req.body);
+        req.body.forEach((newUser, index) => {
+          const userEntry = new User();
+          userEntry.username = newUser.username;
+          userEntry.email = newUser.email;
+          userEntry.class = newUser.class;
+          userEntry.role = newUser.role;
+          userEntry.group = newUser.group;
+          userEntry.teacher = newUser.teacher;
+          userEntry.setPassword(newUser.password);
+          userData.push(userEntry);
+        })
+        User.insertMany(userData).then(() => {
+          const token = user.generateJwt();
+          res.status(200).json({token});
+        }).catch((error) => {
+          res.status(400).json(error);
+        })
+      } else {
+        res.sendStatus(403);
+      }
+    })
+);
 /**
  * Returns a list of all users from a class.
  * Allowed only after token is verified.
