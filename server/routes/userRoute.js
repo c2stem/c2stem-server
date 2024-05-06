@@ -42,7 +42,8 @@ router.post(
               });
             }
 
-            return res.status(400).info;
+            return res.status(200).json(_info);
+
           }
       )(req, res, next);
     })
