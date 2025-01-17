@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const UserAction = require('../models/userAction');
 const User = require('../models/user');
-const catchAsync = require('../utils/catchAsync');
+const catchAsync = require('../utils/CatchAsync');
 
 router.post('/logAction', catchAsync(async (req, res, next) => {
         let username = req.body.username;
