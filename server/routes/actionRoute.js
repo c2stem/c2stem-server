@@ -5,9 +5,6 @@ const User = require('../models/user');
 const catchAsync = require('../utils/catchAsync');
 
 router.post('/logAction', catchAsync(async (req, res, next) => {
-    const user = new User();
-    const verification = user.verifyJwt(req.headers["authorization"]);
-    if(verification){
         let username = req.body.username;
         let type = req.body.type;
         let view = req.body.view;
@@ -28,9 +25,6 @@ router.post('/logAction', catchAsync(async (req, res, next) => {
             }
             res.status(200).json("success");
         });
-    }else {
-        res.sendStatus(403);
-    }
 })
 );
 
