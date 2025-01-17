@@ -10,6 +10,7 @@ const mongoose = require("mongoose");
 
 const UserRoute = require("./routes/userRoute");
 const StateRoute = require("./routes/stateRoute");
+const ActionRoute = require("./routes/actionRoute");
 
 port = process.env.PORT || 8203;
 mongo_uri = "mongodb://localhost:27017/c2stem-class";
@@ -56,6 +57,7 @@ server.use(function (req, res, next) {
 
 server.use("/user", UserRoute);
 server.use("/state", StateRoute);
+server.use("/action", ActionRoute);
 server.get("/*", (req, res) => {
   res.sendFile(path.join(__dirname, "../client/dist/index.html"));
 });
