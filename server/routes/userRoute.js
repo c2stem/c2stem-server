@@ -3,6 +3,9 @@ const router = express.Router();
 const passport = require("passport");
 const User = require("../models/user");
 const catchAsync = require("../utils/CatchAsync");
+const syncFlow = require("../utils/syncFlow");
+const {ProjectClientBuilder} = require('syncflow-node-client');
+
 
 function verifyUser(token) {
   const user = new User;
@@ -15,34 +18,37 @@ router.post(
       return passport.authenticate(
           "local",
           {session: false},
-          (err, user, _info) => {
-            if (err) {
-              console.log("error while authenticating", err);
-              return next(err);
-            }
-
-            if (user) {
-              const token = user.generateJwt();
-              const userRole = user.role;
-              const userClass = user.class;
-              let userGroup = user.group;
-              if (!userGroup) {
-                userGroup = "All";
+          async (err, user, _info) => {
+              if (err) {
+                  console.log("error while authenticating", err);
+                  return next(err);
               }
-              let teacher = user.teacher;
-              if (!teacher) {
-                teacher = 'All'
-              }
-              return res.status(200).json({
-                token: token,
-                role: userRole,
-                class: userClass,
-                group: userGroup,
-                teacher: teacher
-              });
-            }
 
-            return res.status(200).json(_info);
+              if (user) {
+                  const token = user.generateJwt();
+                  const sncyFlowToken = await syncFlow.generateToken(user.username);
+                  console.log(sncyFlowToken);
+                  const userRole = user.role;
+                  const userClass = user.class;
+                  let userGroup = user.group;
+                  if (!userGroup) {
+                      userGroup = "All";
+                  }
+                  let teacher = user.teacher;
+                  if (!teacher) {
+                      teacher = 'All'
+                  }
+                  return res.status(200).json({
+                      token: token,
+                      sncyFlowToken: sncyFlowToken.unwrap(),
+                      role: userRole,
+                      class: userClass,
+                      group: userGroup,
+                      teacher: teacher
+                  });
+              }
+
+              return res.status(200).json(_info);
 
           }
       )(req, res, next);
