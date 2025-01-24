@@ -3,8 +3,8 @@ const router = express.Router();
 const passport = require("passport");
 const User = require("../models/user");
 const catchAsync = require("../utils/CatchAsync");
-const syncFlow = require("../utils/SyncFlow");
-const {ProjectClientBuilder} = require('syncflow-node-client');
+// const syncFlow = require("../utils/SyncFlow");
+// const {ProjectClientBuilder} = require('syncflow-node-client');
 
 
 function verifyUser(token) {
@@ -26,8 +26,8 @@ router.post(
 
               if (user) {
                   const token = user.generateJwt();
-                  const sncyFlowToken = await syncFlow.generateToken(user.username);
-                  console.log(sncyFlowToken);
+                  // const sncyFlowToken = await syncFlow.generateToken(user.username);
+                  // console.log(sncyFlowToken);
                   const userRole = user.role;
                   const userClass = user.class;
                   let userGroup = user.group;
@@ -40,7 +40,7 @@ router.post(
                   }
                   return res.status(200).json({
                       token: token,
-                      sncyFlowToken: sncyFlowToken.unwrap(),
+                      //sncyFlowToken: sncyFlowToken.unwrap(),
                       role: userRole,
                       class: userClass,
                       group: userGroup,
