@@ -3,7 +3,7 @@ const router = express.Router();
 const passport = require("passport");
 const User = require("../models/user");
 const catchAsync = require("../utils/CatchAsync");
-const syncFlow = require("../utils/syncFlow");
+const syncFlow = require("../utils/SyncFlow");
 const {ProjectClientBuilder} = require('syncflow-node-client');
 
 
