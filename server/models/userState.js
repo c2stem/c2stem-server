@@ -16,6 +16,14 @@ const checkSchema = new Schema ({
         type: Array,
         required: true
     },
+    designHistorySummary:{
+        type: Object,
+        required: true
+    },
+    designHistorySummaryLength:{
+        type: Number,
+        required: true
+    }
 });
 
 module.exports = mongoose.model('UserState', checkSchema);

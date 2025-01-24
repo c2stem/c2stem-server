@@ -14,15 +14,19 @@ router.post(
       let username = req.body.username;
       let favoriteList = req.body.favList;
       let checkList = req.body.checkList;
+      let dhSummary = req.body.designHistorySummary;
+      let dhSummaryLength = req.body.designHistorySummaryLength;
 
       const userState = new UserState();
 
       userState.username = username;
       userState.favoriteStatus = favoriteList;
       userState.checkStatus = checkList;
+      userState.designHistorySummary = dhSummary;
+      userState.designHistorySummaryLength = dhSummaryLength;
 
       const filter = { username: username };
-      const update = { favoriteStatus: favoriteList, checkStatus: checkList };
+      const update = { favoriteStatus: favoriteList, checkStatus: checkList, designHistorySummary: dhSummary, designHistorySummaryLength: dhSummaryLength };
       const filteredUser = await UserState.find(filter);
       if (filteredUser.length > 0) {
         let userResponse = await UserState.findOneAndUpdate(filter, update, {
