@@ -28,4 +28,29 @@ router.post('/logAction', catchAsync(async (req, res, next) => {
 })
 );
 
+router.get('/getInquiryActions/:username', catchAsync(async (req, res, next) => {
+    const user = new User();
+    const verification = user.verifyJwt(req.headers["authorization"]);
+    if (!verification) return res.sendStatus(403);
+
+    const username = req.params.username;
+    const inquiryTypes = ["inquiryHypotheses", "inquiryExperiments", "inquiryFindings", "inquiryConclusions"];
+
+    const results = {};
+    for (const type of inquiryTypes) {
+        const latest = await UserAction.findOne(
+            { username, type },
+            null,
+            { sort: { time: -1 } }
+        );
+        if (latest) results[type] = latest;
+    }
+
+    if (Object.keys(results).length === 0) {
+        return res.status(404).json({ message: "No inquiry actions found for this user." });
+    }
+
+    res.status(200).json(results);
+}));
+
 module.exports = router;

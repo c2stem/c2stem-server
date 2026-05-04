@@ -16,6 +16,10 @@ router.post(
       let checkList = req.body.checkList;
       let dhSummary = req.body.designHistorySummary;
       let dhSummaryLength = req.body.designHistorySummaryLength;
+      let hypotheses = req.body.hypotheses;
+      let findings = req.body.findings;
+      let conclusions = req.body.conclusions;
+      let inquiryExperimentHistory = req.body.inquiryExperimentHistory;
 
       const userState = new UserState();
 
@@ -24,9 +28,13 @@ router.post(
       userState.checkStatus = checkList;
       userState.designHistorySummary = dhSummary;
       userState.designHistorySummaryLength = dhSummaryLength;
+      userState.hypotheses = hypotheses;
+      userState.findings = findings;
+      userState.conclusions = conclusions;
+      userState.inquiryExperimentHistory = inquiryExperimentHistory;
 
       const filter = { username: username };
-      const update = { favoriteStatus: favoriteList, checkStatus: checkList, designHistorySummary: dhSummary, designHistorySummaryLength: dhSummaryLength };
+      const update = { favoriteStatus: favoriteList, checkStatus: checkList, designHistorySummary: dhSummary, designHistorySummaryLength: dhSummaryLength, hypotheses, findings, conclusions, inquiryExperimentHistory };
       const filteredUser = await UserState.find(filter);
       if (filteredUser.length > 0) {
         let userResponse = await UserState.findOneAndUpdate(filter, update, {

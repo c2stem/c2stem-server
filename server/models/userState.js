@@ -23,6 +23,22 @@ const checkSchema = new Schema ({
     designHistorySummaryLength:{
         type: Number,
         required: true
+    },
+    hypotheses: {
+        type: Object,
+        required: false
+    },
+    findings: {
+        type: Object,
+        required: false
+    },
+    conclusions: {
+        type: Object,
+        required: false
+    },
+    inquiryExperimentHistory: {
+        type: Array,
+        required: false
     }
 });
 
