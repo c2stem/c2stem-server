@@ -13,12 +13,14 @@ const StateRoute = require("./routes/stateRoute");
 const ActionRoute = require("./routes/actionRoute");
 
 port = process.env.PORT || 8203;
-mongo_uri = "mongodb://localhost:27017/c2stem-class";
+// e.g. mongodb://c2stem:<password>@10.0.0.5:27017/c2stem-class?authSource=admin
+mongo_uri = process.env.MONGO_URI || "mongodb://localhost:27017/c2stem-class";
 
 mongoose
   .connect(mongo_uri, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
+    poolSize: +process.env.MONGO_POOL_SIZE || 20,
   })
   .then(() => {
     console.log("MONGO CONNECTION OPEN!");
@@ -36,7 +38,8 @@ mongoose
 
 server.set("view engine", "html");
 server.use(express.static(path.join(__dirname, "../client/dist")));
-server.use(bodyParser.json());
+// state/setState carries design history, which can exceed the 100kb default
+server.use(bodyParser.json({ limit: process.env.JSON_LIMIT || "5mb" }));
 server.use(
   bodyParser.urlencoded({
     extended: false,
@@ -45,8 +48,18 @@ server.use(
 // server.use(cors());
 server.use(passport.initialize());
 
+// comma-separated list, e.g. CORS_ORIGINS=https://spice.c2-stem.org,http://localhost:8080
+const allowedOrigins = (process.env.CORS_ORIGINS || "http://localhost:8080")
+  .split(",")
+  .map((o) => o.trim());
+
 server.use(function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", "http://localhost:8080");
+  const origin = req.headers.origin;
+  res.header(
+    "Access-Control-Allow-Origin",
+    allowedOrigins.includes(origin) ? origin : allowedOrigins[0]
+  );
+  res.header("Vary", "Origin");
   res.header("Access-Control-Allow-Credentials", "true");
   res.header(
     "Access-Control-Allow-Headers",
