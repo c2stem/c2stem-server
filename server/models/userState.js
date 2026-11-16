@@ -39,6 +39,13 @@ const checkSchema = new Schema ({
     inquiryExperimentHistory: {
         type: Array,
         required: false
+    },
+    // Engineering design tile layouts, one entry per design run:
+    // { projectName, designKey, materials: { A: "grass", ... }, savedAt }
+    // Used by the classroom Compare view to re-render each design's stage.
+    stageLayouts: {
+        type: Array,
+        required: false
     }
 });
 
