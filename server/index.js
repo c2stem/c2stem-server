@@ -52,12 +52,25 @@ server.use(passport.initialize());
 const allowedOrigins = (process.env.CORS_ORIGINS || "http://localhost:8080")
   .split(",")
   .map((o) => o.trim());
+// Local development: also accept http://localhost:<any port> and
+// http://127.0.0.1:<any port>. On by default when CORS_ORIGINS is not set
+// (i.e. a local server); a deployed server must opt in with
+// CORS_ALLOW_LOCALHOST=true.
+const allowLocalhost =
+  process.env.CORS_ALLOW_LOCALHOST === "true" || !process.env.CORS_ORIGINS;
+const LOCALHOST_ORIGIN = /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;
+
+function isAllowedOrigin(origin) {
+  if (!origin) return false;
+  if (allowedOrigins.includes(origin)) return true;
+  return allowLocalhost && LOCALHOST_ORIGIN.test(origin);
+}
 
 server.use(function (req, res, next) {
   const origin = req.headers.origin;
   res.header(
     "Access-Control-Allow-Origin",
-    allowedOrigins.includes(origin) ? origin : allowedOrigins[0]
+    isAllowedOrigin(origin) ? origin : allowedOrigins[0]
   );
   res.header("Vary", "Origin");
   res.header("Access-Control-Allow-Credentials", "true");
@@ -65,6 +78,15 @@ server.use(function (req, res, next) {
     "Access-Control-Allow-Headers",
     "Origin, X-Requested-With, Content-Type, Accept, authorization"
   );
+  res.header(
+    "Access-Control-Allow-Methods",
+    "GET, POST, PUT, PATCH, DELETE, OPTIONS"
+  );
+  // answer CORS preflight requests directly
+  if (req.method === "OPTIONS") {
+    res.sendStatus(204);
+    return;
+  }
   next();
 });
 
